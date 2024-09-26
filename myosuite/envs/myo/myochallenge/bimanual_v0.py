@@ -28,6 +28,7 @@ class BimanualEnvV1(BaseV0):
         "reach_dist": -.1,
         "act": 0,
         "fin_dis": -0.5,
+        "grasp": 1, # new reward for grasping
         # "fin_open": -1,
         # "lift_height": 2,
         "pass_err": -1,
@@ -274,6 +275,7 @@ class BimanualEnvV1(BaseV0):
                 ("lift_bonus", elbow_err),
                 ("lift_height", lift_height),
                 ("pass_err", pass_dist + np.log(pass_dist + 1e-3)),
+                ("grasp", grasp_reward),
                 # Must keys
                 ("sparse", 0),
                 ("goal_dist", goal_dis), 
