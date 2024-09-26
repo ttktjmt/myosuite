@@ -71,6 +71,7 @@
 
   <keyframe>
     <!-- [0~37: MyoHand, 38~-7: MPL, -7~-1: object] removed the MPL part-->
+    <!-- The 3rd key was somehow used in the bimanual_v0.py file ( self.init_qpos[:] = self.sim.model.key_qpos[2].copy() ) -->
     <key name='state1' qpos='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
               -0.412997 -0.232224 1.10552 0.000796327 1.11022e-16 2.77556e-16 1'/>
     <key name='state2' qpos='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
