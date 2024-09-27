@@ -12,3 +12,8 @@ Pillow
 pink-noise-rl
 packaging
 gitpython
+
+jupyterlab
+torch
+stable-baselines3[extra]
+sb3-contrib
