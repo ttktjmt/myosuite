@@ -1,4 +1,5 @@
 *.DS_Store
+*:Zone.Identifier
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -124,3 +125,6 @@ osl.log
 /workspace
 
 *processed.xml
+
+videos/
+MPL_baselines/
