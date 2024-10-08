@@ -125,3 +125,6 @@ osl.log
 /workspace
 
 *processed.xml
+
+videos/
+MPL_baselines/
