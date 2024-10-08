@@ -101,6 +101,7 @@ class RunTrack(WalkEnvV0):
                rough_difficulties=(0,0),
                stairs_difficulties=(0,0),
                real_width=1,
+               real_length=120,
                end_pos = -15,
                start_pos = 14,
                init_pose_path=None,
@@ -145,9 +146,13 @@ class RunTrack(WalkEnvV0):
             rough_difficulties=rough_difficulties,
             hills_difficulties=hills_difficulties,
             stairs_difficulties=stairs_difficulties,
+            real_length=real_length,
+            real_width=real_width,
             reset_type=terrain,
+            view_distance=5,
         )
         self.real_width = real_width
+        self.real_length = real_length
         self.reset_type = reset_type
         self.terrain = terrain
         self.grf_sensor_names = ['l_foot', 'l_toes']
@@ -178,8 +183,8 @@ class RunTrack(WalkEnvV0):
         obs_dict['terrain'] = np.array([self.terrain_type])
 
         # proprioception
-        obs_dict['internal_qpos'] = self.get_internal_qpos() #sim.data.qpos[7:].copy()
-        obs_dict['internal_qvel'] = self.get_internal_qvel() #sim.data.qvel[6:].copy() * self.dt
+        obs_dict['internal_qpos'] = self.get_internal_qpos()
+        obs_dict['internal_qvel'] = self.get_internal_qvel()
         obs_dict['grf'] = self._get_grf().copy()
         obs_dict['socket_force'] = self._get_socket_force().copy()
         obs_dict['torso_angle'] = self.sim.data.body('pelvis').xquat.copy()
@@ -533,6 +538,7 @@ class RunTrack(WalkEnvV0):
         counter = 0
         for jnt in self.biological_jnt:
             temp_qpos[counter] = self.sim.data.joint(jnt).qpos[0].copy()
+            counter+=1
         return temp_qpos
 
     def get_internal_qvel(self):
@@ -543,6 +549,7 @@ class RunTrack(WalkEnvV0):
         counter = 0
         for jnt in self.biological_jnt:
             temp_qvel[counter] = self.sim.data.joint(jnt).qvel[0].copy()
+            counter+=1
         return temp_qvel * self.dt
 
     def muscle_lengths(self):
@@ -553,6 +560,7 @@ class RunTrack(WalkEnvV0):
         counter = 0
         for jnt in self.biological_act:
             temp_len[counter] = self.sim.data.actuator(jnt).length[0].copy()
+            counter+=1
         return temp_len
 
     def muscle_forces(self):
@@ -563,6 +571,7 @@ class RunTrack(WalkEnvV0):
         counter = 0
         for jnt in self.biological_act:
             temp_frc[counter] = self.sim.data.actuator(jnt).force[0].copy()
+            counter+=1
 
         return np.clip(temp_frc / 1000, -100, 100)
 
@@ -574,6 +583,7 @@ class RunTrack(WalkEnvV0):
         counter = 0
         for jnt in self.biological_act:
             temp_vel[counter] = self.sim.data.actuator(jnt).velocity[0].copy()
+            counter+=1
 
         return np.clip(temp_vel, -100, 100)
 
