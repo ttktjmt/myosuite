@@ -176,7 +176,7 @@ The DEP-RL baseline for the myoLeg was developed by Pierre Schumacher, Daniel HÃ
 ```
 @inproceedings{
 schumacher2023deprl,
-title={{DEP}-{RL}: Embodied Exploration for Reinforcement Learning in Overactuated and Musculoskeletal Systems},
+title={ {DEP}-{RL}: Embodied Exploration for Reinforcement Learning in Overactuated and Musculoskeletal Systems},
 author={Pierre Schumacher and Daniel Haeufle and Dieter B{\"u}chler and Syn Schmitt and Georg Martius},
 booktitle={The Eleventh International Conference on Learning Representations },
 year={2023},
