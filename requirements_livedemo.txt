@@ -2,5 +2,8 @@
 mujoco
 mujoco_mjx
 brax
+flatten-dict
+torch
 stable_baselines3
 lxml
+mediapy

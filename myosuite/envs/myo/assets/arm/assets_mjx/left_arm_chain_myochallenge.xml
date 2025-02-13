@@ -16,7 +16,7 @@
 					<joint axis="0 0 1" name="prosthesis/Lelbow" range="0.05 2.356"/>
 					<geom mesh="prosthesis/forearm_linkL" class="MPL_arm_dark"/>
 					<!-- LEFT HAND -->
-					<include file="../../../../../simhive/MPL_sim/assets/handL_chain.xml"/>
+					<include file="handL_chain.xml"/>
 				</body>
 			</body>
 		</body>

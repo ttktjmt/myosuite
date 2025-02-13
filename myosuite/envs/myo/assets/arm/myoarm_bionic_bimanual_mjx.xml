@@ -18,7 +18,7 @@
 
   <compiler autolimits = "true" inertiafromgeom="auto" angle="radian" balanceinertia="true" boundmass="0.001" boundinertia=".0001"  meshdir='../../../../simhive/myo_sim' texturedir='../../../../simhive/myo_sim/'/>
   <option timestep="0.002">
-    <flag multiccd="enable"/>
+    <!-- <flag multiccd="enable"/> -->
   </option>
 
   <visual>
@@ -47,8 +47,9 @@
     <!-- ======= Human ======= -->
     <geom name="body" type="mesh" mesh="body_nohand" euler="0 0 3.14" contype="0" conaffinity="0"/>
     <body name="full_body" pos="-.025 0.1 1.40">
-      <!-- <include file="assets_mjx/myoarm_body.xml"/> -->
-      <include file="assets_mjx/myoarm_body_nocon.xml"/>
+      <include file="assets_mjx/myoarm_body_sphere.xml"/>
+      <!-- <include file="assets_mjx/myoarm_body_box.xml"/> -->
+      <!-- <include file="assets_mjx/myoarm_body_nocon.xml"/> -->
       <!-- <include file="../../../../simhive/myo_sim/arm/assets/myoarm_body.xml"/> -->
     </body>
     <include file='assets_mjx/left_arm_chain_myochallenge.xml'/>
