@@ -56,18 +56,18 @@ register_env_with_variants(id='myoChallengeBimanualOneArm-v0',
         }
     )
 
-register_env_with_variants(id='myoChallengeBimanualMjx-v0',
-        entry_point='myosuite.envs.myo.myochallenge.bimanual_mjx_v0:BimanualEnvV1',
-        max_episode_steps=1000,
-        kwargs={
-            'model_path': curr_dir + '/../assets/arm/myoarm_bionic_bimanual_mjx.xml',
-            'normalize_act': True,
-            'frame_skip': 5,
-            'obj_scale_change': [0.1, 0.05, 0.1],  # 10%, 5%, 10% scale variations in respective geom directions
-            'obj_mass_change': (-0.050, 0.050),  # +-50gms
-            'obj_friction_change': (0.1, 0.001, 0.00002)  # nominal: 1.0, 0.005, 0.0001
-        }
-    )
+# register_env_with_variants(id='myoChallengeBimanualMjx',
+#         entry_point='myosuite.envs.myo.myochallenge.bimanual_mjx_v0:BimanualEnvMJX',
+#         max_episode_steps=1000,
+#         kwargs={
+#             'model_path': curr_dir + '/../assets/arm/myoarm_bionic_bimanual_mjx.xml',
+#             'normalize_act': True,
+#             'frame_skip': 5,
+#             'obj_scale_change': [0.1, 0.05, 0.1],  # 10%, 5%, 10% scale variations in respective geom directions
+#             'obj_mass_change': (-0.050, 0.050),  # +-50gms
+#             'obj_friction_change': (0.1, 0.001, 0.00002)  # nominal: 1.0, 0.005, 0.0001
+#         }
+#     )
 
 # MyoChallenge 2024 envs ==============================================
 register_env_with_variants(id='myoChallengeOslRunFixed-v0',
