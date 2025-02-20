@@ -1,56 +1,88 @@
+from datetime import datetime
+import functools
 import jax
-import jax.numpy as jnp
-import numpy as np
-
-from brax.io import mjcf, model
-from brax.io.html import render as html_render
+from jax import numpy as jp
+from matplotlib import pyplot as plt
+import mujoco
+from mujoco import mjx
+from brax import envs
+from brax.envs.base import Env, PipelineEnv, State
 from brax.training.acme.running_statistics import normalize
 from brax.training.agents.ppo import networks as ppo_networks
+from brax.training.agents.ppo import train as ppo
+from brax.io import mjcf, model, html
+import mujoco.viewer
+
+from elbow import Elbow
+
+print(f"Current backend: {jax.default_backend()}")
 
 xml = '../assets/elbow/myoelbow_1dof6muscles_mjx_eval.xml'
 
 ppo_network = ppo_networks.make_ppo_networks(
-    4, 6, preprocess_observations_fn=normalize)
+      4,
+      6,
+      preprocess_observations_fn=normalize)
 model_path = 'elbow_params.pickle'
 params = model.load_params(model_path)
 
-def deterministic_policy(obs_np):
-    """Compute the deterministic action given an observation.
-    (Here we assume the network works with NumPy arrays.)
+def deterministic_policy(input_data):
+    logits = ppo_network.policy_network.apply(*params[:2], jp.array([input_data], dtype=jp.float32))
+    brax_result = ppo_network.parametric_action_distribution.mode(logits)
+    return brax_result[0] # remove the batch dimension
+
+def get_obs(data, target):
+    """Observes elbow angle, velocities, and last applied torque."""
+    position = data.qpos
+
+    # external_contact_forces are excluded
+    return jp.concatenate([
+        position,
+        data.qvel,
+        data.qfrc_actuator,
+        target
+    ])
+
+def arm_control(model, data):
     """
-    logits = ppo_network.policy_network.apply(
-        *params[:2], np.array([obs_np], dtype=np.float32))
-    action = ppo_network.parametric_action_distribution.mode(logits)
-    return action[0]
-
-sys = mjcf.load(xml)
-
-def get_obs(state):
-    """Extract observation from a Brax state.
-    Adjust this function so that the observation matches what your policy expects.
-    For example, here we simply concatenate positions and velocities.
+    :type model: mujoco.MjModel
+    :type data: mujoco.MjData
     """
-    return jnp.concatenate([state.qp[:state.sys.config.q_size],
-                            state.qp[state.sys.config.q_size:]], axis=-1)
+    # `model` contains static information about the modeled system, e.g. their indices in dynamics matrices
+    # `data` contains the current dynamic state of the system
+    observations = get_obs(data, [data.ctrl[-1]])
+    data.ctrl[:-1] = deterministic_policy(observations)
+    pass
 
-def rollout(sys, policy, episode_length=200):
-    """Roll out one episode using the given policy on the Brax system."""
-    key = jax.random.PRNGKey(0)
-    state = sys.reset(key)
-    trajectory = [state]
-    for _ in range(episode_length):
-        obs = get_obs(state)
-        obs_np = np.array(obs)
-        action = deterministic_policy(obs_np)
-        state = sys.step(state, jnp.array(action))
-        trajectory.append(state)
-    return trajectory
+def main(is_msk=True):
+    envs.register_environment('elbow', Elbow)
+    env = envs.get_environment('elbow', is_msk=is_msk)
+    jit_reset = jax.jit(env.reset)
+    jit_step = jax.jit(env.step)
 
+    # initialize the state
+    rng = jax.random.PRNGKey(0)
+    state = jit_reset(rng)
+    rollout = [state.pipeline_state]
+
+    n_steps = 500
+    for step in range(n_steps):
+        if state.done or step % 100 == 0:
+            state = jit_reset(state.info['rng'])
+        observations = get_obs(state.pipeline_state, state.info['target_angle'])
+        action = deterministic_policy(observations)
+        state = jit_step(state, action)
+        rollout.append(state.pipeline_state)
+    
+    # Save the trajectory as an HTML file
+    render_every = 2
+    html_content = html.render(
+        env.sys.tree_replace({'opt.timestep': env.dt}),
+        rollout[::render_every],
+        height=850,
+    )
+    with open('elbow.html', 'w') as f:
+        f.write(html_content)
 
 if __name__ == '__main__':
-    trajectory = rollout(sys, deterministic_policy, episode_length=500)
-    html_content = html_render(sys, trajectory, height=500, width=500)
-
-    with open("output.html", "w") as f:
-        f.write(html_content)
-    print("Rollout visualization saved as rollout.html")
+    main()
