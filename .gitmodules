@@ -15,3 +15,7 @@
 [submodule "myosuite/simhive/YCB_sim"]
 	path = myosuite/simhive/YCB_sim
 	url = https://github.com/vikashplus/YCB_sim.git
+[submodule "brax"]
+	path = brax
+	url = https://github.com/ttktjmt/brax.git
+	branch = tendon
