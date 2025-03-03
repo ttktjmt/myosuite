@@ -1,11 +1,14 @@
 import jax
 from jax import numpy as jnp
+import brax
 from brax import envs
 from brax.training.acme.running_statistics import normalize
 from brax.training.agents.ppo import networks as ppo_networks
 from brax.io import model, html
+print(f"Using brax at: {brax.__file__}")
 from tqdm import tqdm
 from elbow import Elbow
+from etils import epath
 
 # Create PPO network and load parameters
 ppo_network = ppo_networks.make_ppo_networks(
@@ -55,10 +58,11 @@ def main(is_msk: bool = True) -> None:
     html_content = html.render(
         env.sys.tree_replace({'opt.timestep': env.dt}),
         rollout,
-        height=850,
+        height='100vh',
+        colab=False,
     )
-    with open('elbow.html', 'w') as f:
-        f.write(html_content)
+    path = epath.Path('./elbow.html')
+    path.write_text(html_content)
 
 if __name__ == '__main__':
     main()
